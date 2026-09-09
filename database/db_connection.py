@@ -1,14 +1,18 @@
+import os
+from dotenv import load_dotenv
 import mysql.connector
+
+load_dotenv()
 
 def get_connection():
     connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="pushpamvishesh@123",
-        database="sysguard",
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        port=os.getenv("DB_PORT")
     )
     return connection
-
 
 
 def save_system_metrics(snapshot):
@@ -86,16 +90,18 @@ def get_process_metrics(system_metric_id):
 
     return result
 
-connection = get_connection()
-print("Connected to MySQL successfully!!")
+if __name__ == "__main__":
+    connection = get_connection()
+    print("Connected to MySQL successfully!!")
 
-latest = get_latest_system_metrics()
-print(latest)
+    latest = get_latest_system_metrics()
+    print(latest)
 
-processes = get_process_metrics(latest['id'])
+    if latest:
+        processes = get_process_metrics(latest['id'])
 
-print("\nProcesses:")
-for process in processes:
-    print(process)
+        print("\nProcesses:")
+        for process in processes:
+            print(process)
 
-connection.close()
+    connection.close()
