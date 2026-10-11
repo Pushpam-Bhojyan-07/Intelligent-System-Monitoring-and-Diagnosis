@@ -1,4 +1,4 @@
-function ProcessTable({ processes, formatBytes }) {
+function ProcessTable({ processes }) {
     return (
         <div className="process-section">
 
@@ -25,7 +25,7 @@ function ProcessTable({ processes, formatBytes }) {
                             <td>{process.pid}</td>
                             <td>{process.name}</td>
                             <td>{process.cpu}%</td>
-                            <td>{formatBytes(process.memory)}</td>
+                            <td>{process.memory}%</td>
                         </tr>
                     ))}
                 </tbody>
