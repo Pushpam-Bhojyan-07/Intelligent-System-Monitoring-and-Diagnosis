@@ -1,0 +1,10 @@
+
+.memory-analysis-page {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .memory-analysis {
+        gap: 18px;
+    }
+}
