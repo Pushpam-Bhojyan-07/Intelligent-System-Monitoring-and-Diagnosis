@@ -41,25 +41,80 @@ def save_system_metrics(snapshot):
 
 
 
+
+from datetime import datetime
+
+
 def save_process_metrics(snapshot_id, processes):
     connection = get_connection()
-    cursor = connection.cursor()
+    cursor = connection.cursor(dictionary=True)
 
-    query = "INSERT INTO process_metrics(system_metric_id, pid, process_name, cpu_usage, memory_usage) VALUES(%s, %s, %s, %s, %s)"
+    try:
+        insert_query = """
+            INSERT INTO process_metrics (
+                system_metric_id,
+                pid,
+                process_name,
+                cpu_usage,
+                memory_usage,
+                first_seen
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
 
-    for process in processes:
-        values = (
-            snapshot_id,
-            process['pid'],
-            process['name'],
-            process['cpu_percent'],
-            process['memory_percent']
-        )
-        cursor.execute(query, values)
-    
-    connection.commit()
-    cursor.close()
-    connection.close()
+        for process in processes:
+            pid = process["pid"]
+
+            cursor.execute(
+                """
+                SELECT first_seen
+                FROM process_metrics
+                WHERE pid = %s AND first_seen IS NOT NULL
+                ORDER BY first_seen ASC
+                LIMIT 1
+                """,
+                (pid,)
+            )
+
+            existing = cursor.fetchone()
+
+            if existing:
+                first_seen = existing["first_seen"]
+            else:
+                first_seen = process.get("first_seen_at")
+
+                if isinstance(first_seen, str):
+                    first_seen = datetime.fromisoformat(
+                        first_seen.replace("Z", "+00:00")
+                    )
+
+                if first_seen is not None and first_seen.tzinfo is not None:
+                    first_seen = first_seen.replace(tzinfo=None)
+
+                if first_seen is None:
+                    first_seen = datetime.now()
+
+            values = (
+                snapshot_id,
+                pid,
+                process["name"],
+                process["cpu_percent"],
+                process["memory_percent"],
+                first_seen
+            )
+
+            cursor.execute(insert_query, values)
+
+        connection.commit()
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()
+
 
 
 def get_latest_system_metrics():
@@ -89,6 +144,57 @@ def get_process_metrics(system_metric_id):
     connection.close()
 
     return result
+
+
+def get_historical_process_metrics(pid, limit=100):
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = """
+        SELECT
+            pid,
+            process_name,
+            timestamp,
+            cpu_usage,
+            memory_usage
+        FROM process_metrics
+        WHERE pid = %s
+        ORDER BY timestamp DESC
+        LIMIT %s
+    """
+
+    try:
+        cursor.execute(query, (pid, limit))
+        return cursor.fetchall()
+    finally:
+        cursor.close()
+        connection.close()
+
+
+
+def get_all_historical_process_metrics(limit=500):
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = """
+        SELECT
+            pid,
+            process_name,
+            timestamp,
+            cpu_usage,
+            memory_usage
+        FROM process_metrics
+        ORDER BY timestamp DESC
+        LIMIT %s
+    """
+
+    try:
+        cursor.execute(query, (limit,))
+        return cursor.fetchall()
+    finally:
+        cursor.close()
+        connection.close()
+
 
 if __name__ == "__main__":
     connection = get_connection()

@@ -7,12 +7,15 @@ import SystemHealth from "./components/SystemHealth";
 import Header from "./components/Header";
 import "./Dashboard.css";
 
-function Dashboard() {
-    const formatBytes = (bytes)=>{
-        if(bytes == 0) return "0 Bytes";
+function Dashboard({ activePage, onNavigate }) {
+    const formatBytes = (bytes) => {
+        if (!bytes) return "0 Bytes";
 
         const units = ["Bytes", "KB", "MB", "GB", "TB"];
-        const index = Math.floor(Math.log(bytes) / Math.log(1024));
+        const index = Math.min(
+            Math.floor(Math.log(bytes) / Math.log(1024)),
+            units.length - 1
+        );
 
         return `${(bytes / Math.pow(1024, index)).toFixed(2)} ${units[index]}`;
     };
@@ -21,92 +24,109 @@ function Dashboard() {
     const [processes, setProcesses] = useState([]);
     const [history, setHistory] = useState([]);
 
-    useEffect(()=>{
-        const fetchData = () =>{
-                
+    useEffect(() => {
+        const fetchData = () => {
             fetch("http://localhost:8000/api/metrics/latest")
-                .then((response) => response.json())
-                .then((data) =>{
-                    setMetrics(data);
+                .then((response) => {
+                    if (!response.ok) throw new Error("Metrics request failed");
+                    return response.json();
                 })
-                .catch((error) => {
-                    console.error("Failed to fetch metrics: ", error);
-                });
+                .then(setMetrics)
+                .catch((error) =>
+                    console.error("Failed to fetch metrics:", error)
+                );
 
             fetch("http://localhost:8000/api/metrics/latest/processes")
-                .then((response) => response.json())
-                .then((data) => {
-                    setProcesses(data);
+                .then((response) => {
+                    if (!response.ok) throw new Error("Processes request failed");
+                    return response.json();
                 })
-                .catch((error) => {
-                    console.error("Failed to fetch the processes:", error);
-                });
+                .then(setProcesses)
+                .catch((error) =>
+                    console.error("Failed to fetch processes:", error)
+                );
 
             fetch("http://localhost:8000/api/metrics/history")
-                .then((response) => response.json())
-                .then((data) => {
-                    setHistory(data);
+                .then((response) => {
+                    if (!response.ok) throw new Error("History request failed");
+                    return response.json();
                 })
-                .catch((error) => {
-                    console.error("Failed to fetch history:", error);
-                });
+                .then(setHistory)
+                .catch((error) =>
+                    console.error("Failed to fetch history:", error)
+                );
         };
+
         fetchData();
         const interval = setInterval(fetchData, 5000);
 
-        return () =>{
-            clearInterval(interval);
-        };
-
+        return () => clearInterval(interval);
     }, []);
 
     let systemStatus = "Healthy";
-    if(metrics && (
-        metrics.cpu >= 80 ||
-        metrics.memory >= 80 ||
-        metrics.disk >= 90
-    )){
+
+    if (
+        metrics &&
+        (metrics.cpu >= 80 ||
+            metrics.memory >= 80 ||
+            metrics.disk >= 90)
+    ) {
         systemStatus = "Warning";
     }
 
-    let highCpuProcesses = [];
-    if(processes.length > 0){
-        highCpuProcesses = processes.filter((process) => process.cpu >= 80);
-    }
+    const highCpuProcesses = processes.filter(
+        (process) => process.cpu >= 80
+    );
 
     return (
-        <div className="app-background"> 
+        <div className="app-background">
             <div className="dashboard-layout">
-
-                <Sidebar/>
+                <Sidebar
+                    activePage={activePage}
+                    onNavigate={onNavigate}
+                />
 
                 <main className="main-content">
-                    <Header />
+                    <Header
+                        pageLabel="Overview"
+                        title="System Overview"
+                        description="Monitor your system performance and health"
+                    />
 
-                    {metrics && (
+                    {!metrics ? (
+                        <p className="loading-message">
+                            Loading system metrics...
+                        </p>
+                    ) : (
                         <>
                             <p className="last-updated">
                                 Last updated:{" "}
                                 {new Date(metrics.timestamp).toLocaleTimeString()}
                             </p>
-                            <div className={`system-status ${systemStatus.toLowerCase()}`}>
-                                <span className="status-dot"></span>
+
+                            <div
+                                className={`system-status ${systemStatus.toLowerCase()}`}
+                            >
+                                <span className="status-dot" />
                                 <span>System {systemStatus}</span>
                             </div>
 
                             {highCpuProcesses.length > 0 && (
-                            <div className="process-alert">
-                                <strong>High CPU Process Detected</strong>
+                                <div className="process-alert">
+                                    <strong>High CPU Process Detected</strong>
 
-                                {highCpuProcesses.map((process) => (
-                                    <div key={process.pid} className="alert-process">
-                                        {process.name} — {process.cpu}% CPU
-                                    </div>
-                                ))}
-                            </div>
+                                    {highCpuProcesses.map((process) => (
+                                        <div
+                                            key={process.pid}
+                                            className="alert-process"
+                                        >
+                                            {process.name} — {process.cpu}% CPU
+                                        </div>
+                                    ))}
+                                </div>
                             )}
 
-                        <MetricCards
+                            <MetricCards
                                 metrics={metrics}
                                 processes={processes}
                                 formatBytes={formatBytes}
@@ -114,13 +134,9 @@ function Dashboard() {
 
                             <CpuChart history={history} />
 
-                            <ProcessTable
-                                processes={processes}
-                                formatBytes={formatBytes}
-                            />
+                            <ProcessTable processes={processes} />
                         </>
                     )}
-
                 </main>
 
                 <SystemHealth
@@ -128,9 +144,9 @@ function Dashboard() {
                     metrics={metrics}
                     highCpuProcesses={highCpuProcesses}
                 />
-
             </div>
         </div>
     );
 }
+
 export default Dashboard;

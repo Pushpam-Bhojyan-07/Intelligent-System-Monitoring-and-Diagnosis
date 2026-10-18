@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS process_metrics (
     process_name VARCHAR(255),
     cpu_usage DECIMAL(5,2),
     memory_usage DECIMAL(5,2),
+    first_seen DATETIME NULL,
     FOREIGN KEY (system_metric_id)
         REFERENCES system_metrics(id)
 );
