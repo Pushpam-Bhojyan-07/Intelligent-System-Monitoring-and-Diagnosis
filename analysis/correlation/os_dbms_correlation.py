@@ -3,6 +3,8 @@
 # This module analyzes relationships between operating
 # system resource utilization and database performance.
 # ============================================================
+# Calculate the relationship between OS resource metrics
+# and DBMS performance metrics.
 import math
 from database.db_connection import get_connection
 
