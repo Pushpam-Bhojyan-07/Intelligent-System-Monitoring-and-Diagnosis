@@ -170,7 +170,7 @@ def detect_sustained_metric(
         current_start = record["interval_start"]
         current_end = record["interval_end"]
 
-        
+        # Reset counter if there is a gap between intervals.
         if previous_end is not None and current_start > previous_end:
             count = 0
 
@@ -202,7 +202,7 @@ def detect_sustained_metric(
 
 def generate_diagnosis_report(dataset):
 
-    
+    # Detect sustained performance issues.
     cpu_alerts = detect_sustained_metric(
         dataset,
         "avg_cpu",
@@ -228,7 +228,7 @@ def generate_diagnosis_report(dataset):
         cpu_alerts + memory_alerts + latency_alerts
     )
 
-    
+    # Diagnose individual intervals.
     diagnosis_results = diagnose_all_intervals(dataset)
 
     # Prepare metric summary.
