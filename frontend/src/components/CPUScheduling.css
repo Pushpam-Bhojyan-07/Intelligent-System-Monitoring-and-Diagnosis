@@ -1,0 +1,574 @@
+
+/* =========================================
+   CPU Scheduling Analysis
+   Clean, responsive dashboard styling
+========================================= */
+
+.scheduling-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    margin-top: 24px;
+    padding: 24px;
+    background: var(--card-background, #ffffff);
+    color: var(--dark-text, #263329);
+    border: 1px solid var(--border-color, #e8ece4);
+    border-radius: 14px;
+    font-size: 14px;
+}
+
+.scheduling-section *,
+.scheduling-section *::before,
+.scheduling-section *::after {
+    box-sizing: border-box;
+}
+
+.scheduling-section h2,
+.scheduling-section h3,
+.scheduling-section p {
+    overflow-wrap: anywhere;
+}
+
+/* ---------- Header ---------- */
+
+.scheduling-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.scheduling-heading > div {
+    min-width: 0;
+}
+
+.scheduling-heading h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.35;
+    font-weight: 600;
+    color: var(--dark-text, #263329);
+}
+
+.scheduling-heading p:last-child {
+    margin: 0;
+    color: var(--secondary-text, #777f75);
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.scheduling-eyebrow {
+    margin: 0 0 7px;
+    color: var(--primary-green, #879d75);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.scheduling-tag {
+    flex-shrink: 0;
+    padding: 8px 13px;
+    border-radius: 20px;
+    background: var(--light-green, #dce5d4);
+    color: #506b49;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ---------- Controls ---------- */
+
+.scheduling-controls {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.scheduling-controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 220px;
+    max-width: 100%;
+    color: var(--dark-text, #263329);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.scheduling-controls select,
+.scheduling-controls input {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid #dfe5da;
+    border-radius: 7px;
+    outline: none;
+    background: #ffffff;
+    color: #263329;
+    font-family: inherit;
+    font-size: 13px;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.scheduling-controls select:focus,
+.scheduling-controls input:focus {
+    border-color: #879d75;
+    box-shadow: 0 0 0 3px rgb(135 157 117 / 14%);
+}
+
+.scheduling-controls select:disabled,
+.scheduling-controls input:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.scheduling-controls > div {
+    min-width: 0;
+}
+
+.scheduling-controls > div .comparison-description {
+    margin: 8px 0 0;
+}
+
+/* ---------- Table containers ---------- */
+
+.scheduling-table-wrap {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5c3 #f5f7f2;
+}
+
+.scheduling-table-wrap::-webkit-scrollbar {
+    height: 7px;
+}
+
+.scheduling-table-wrap::-webkit-scrollbar-track {
+    background: #f5f7f2;
+    border-radius: 8px;
+}
+
+.scheduling-table-wrap::-webkit-scrollbar-thumb {
+    background: #cbd5c3;
+    border-radius: 8px;
+}
+
+.scheduling-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto;
+    font-size: 13px;
+}
+
+.scheduling-table th {
+    padding: 13px 14px;
+    background: #f5f7f2;
+    color: #65715f;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 1px solid #e8ece4;
+}
+
+.scheduling-table td {
+    padding: 13px 14px;
+    color: var(--dark-text, #263329);
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #e8ece4;
+    white-space: nowrap;
+    line-height: 1.45;
+}
+
+.scheduling-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.scheduling-table tbody tr:hover {
+    background: #fafbf8;
+}
+
+.scheduling-table td:nth-child(2),
+.scheduling-table th:nth-child(2) {
+    min-width: 180px;
+    max-width: 280px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* Keep the algorithm comparison compact and readable. */
+.scheduling-results > .scheduling-table-wrap:last-child
+.scheduling-table {
+    min-width: 680px;
+}
+
+/* ---------- Inputs retained for reusable table controls ---------- */
+
+.scheduling-table td input {
+    width: 100%;
+    min-width: 65px;
+    padding: 8px 10px;
+    border: 1px solid #dfe5da;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #263329;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+/* ---------- Actions and buttons ---------- */
+
+.scheduling-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.add-process,
+.run-simulation,
+.remove-process {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    border-radius: 7px;
+    padding: 10px 15px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.add-process {
+    border: 1px solid #dce5d4;
+    background: #edf2e9;
+    color: #506b49;
+}
+
+.add-process:hover:not(:disabled) {
+    background: #e2eadb;
+    border-color: #cbd8c1;
+}
+
+.run-simulation {
+    border: 1px solid #879d75;
+    background: #879d75;
+    color: #ffffff;
+}
+
+.run-simulation:hover:not(:disabled) {
+    background: #718960;
+    border-color: #718960;
+}
+
+.remove-process {
+    border: 1px solid #e8ece4;
+    background: #ffffff;
+    color: #777f75;
+}
+
+.remove-process:hover:not(:disabled) {
+    background: #f5f7f2;
+    border-color: #d5ddd0;
+}
+
+.add-process:disabled,
+.run-simulation:disabled,
+.remove-process:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* ---------- Results section ---------- */
+
+.scheduling-results {
+    min-width: 0;
+    margin-top: 28px;
+}
+
+.scheduling-results h3 {
+    margin: 26px 0 14px;
+    color: var(--dark-text, #263329);
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.scheduling-results h3:first-child {
+    margin-top: 0;
+}
+
+/* ---------- Gantt chart ---------- */
+
+.gantt-chart {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid #e8ece4;
+    border-radius: 10px;
+    background: #ffffff;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5c3 #f5f7f2;
+}
+
+.gantt-chart::-webkit-scrollbar {
+    height: 7px;
+}
+
+.gantt-chart::-webkit-scrollbar-track {
+    background: #f5f7f2;
+}
+
+.gantt-chart::-webkit-scrollbar-thumb {
+    background: #cbd5c3;
+    border-radius: 8px;
+}
+
+.gantt-segment {
+    display: flex;
+    flex: 1 0 100px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 100px;
+    min-height: 76px;
+    padding: 12px 10px;
+    background: #e5eddf;
+    color: #40563b;
+    border-right: 1px solid #ffffff;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.gantt-segment:last-child {
+    border-right: none;
+}
+
+.gantt-segment strong {
+    display: block;
+    max-width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.gantt-segment span {
+    display: block;
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.gantt-idle {
+    background: #f0f1ee;
+    color: #777f75;
+}
+
+/* ---------- Average metrics ---------- */
+
+.scheduling-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.scheduling-summary > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 8px;
+    padding: 17px;
+    border: 1px solid #e8ece4;
+    border-radius: 10px;
+    background: #f8f9f6;
+}
+
+.scheduling-summary span {
+    color: #777f75;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.scheduling-summary strong {
+    color: var(--dark-text, #263329);
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Descriptions and comparison ---------- */
+
+.comparison-description {
+    margin: 0 0 14px;
+    color: #777f75;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.scheduling-table tr.selected-algorithm {
+    background: #f0f4eb;
+}
+
+.scheduling-table tr.selected-algorithm:hover {
+    background: #eaf0e3;
+}
+
+.selected-label {
+    display: inline-block;
+    margin-left: 5px;
+    color: #506b49;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ---------- Loading and error messages ---------- */
+
+.scheduling-section [role="alert"] {
+    margin: 16px 0;
+    padding: 14px 16px;
+    border: 1px solid #e8ece4;
+    border-radius: 8px;
+    background: #f8f9f6;
+    color: #596453;
+}
+
+.scheduling-section [role="alert"] p {
+    margin: 0 0 12px;
+    line-height: 1.6;
+}
+
+/* ---------- Responsive layout ---------- */
+
+@media (max-width: 900px) {
+    .scheduling-section {
+        padding: 20px;
+    }
+
+    .scheduling-summary {
+        gap: 10px;
+    }
+
+    .scheduling-summary > div {
+        padding: 14px;
+    }
+
+    .scheduling-summary strong {
+        font-size: 21px;
+    }
+}
+
+@media (max-width: 650px) {
+    .scheduling-section {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 11px;
+    }
+
+    .scheduling-heading {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .scheduling-heading h2 {
+        font-size: 20px;
+    }
+
+    .scheduling-tag {
+        align-self: flex-start;
+    }
+
+    .scheduling-controls {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .scheduling-controls label {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .scheduling-controls > div {
+        width: 100%;
+    }
+
+    .scheduling-controls > div .run-simulation {
+        width: 100%;
+    }
+
+    .scheduling-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .scheduling-summary > div {
+        padding: 15px;
+    }
+
+    .scheduling-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .scheduling-actions button {
+        width: 100%;
+    }
+
+    .scheduling-results {
+        margin-top: 24px;
+    }
+
+    .scheduling-results h3 {
+        font-size: 15px;
+    }
+
+    .gantt-segment {
+        min-width: 110px;
+    }
+
+    .scheduling-table {
+        min-width: 760px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scheduling-controls select,
+    .scheduling-controls input,
+    .add-process,
+    .run-simulation,
+    .remove-process {
+        transition: none;
+    }
+}
