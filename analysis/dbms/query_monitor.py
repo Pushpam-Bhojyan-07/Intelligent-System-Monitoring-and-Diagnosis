@@ -3,6 +3,7 @@
 # This module monitors database query execution and
 # collects information related to query performance.
 # ============================================================
+# Timestamp information helps track query execution time.
 from datetime import datetime
 
 from database.db_connection import get_connection
