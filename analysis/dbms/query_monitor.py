@@ -1,3 +1,8 @@
+# ============================================================
+# DBMS Query Monitoring Module
+# This module monitors database query execution and
+# collects information related to query performance.
+# ============================================================
 from datetime import datetime
 
 from database.db_connection import get_connection
