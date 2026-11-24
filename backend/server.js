@@ -1,7 +1,7 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
 const { execFile } = require("child_process");
 const path = require("path");
 
@@ -108,7 +108,7 @@ app.get("/api/metrics/history", (req, res)=>{
 
 app.get("/api/analysis/processes", (req, res) => {
     const projectRoot = path.resolve(__dirname, "..");
-    const pythonPath = path.join(projectRoot, ".venv", "bin", "python");
+    const pythonPath = path.join(projectRoot, ".venv", "Scripts", "python.exe");
     const scriptPath = path.join(
         projectRoot,
         "analysis",
@@ -153,8 +153,8 @@ app.get("/api/scheduling", (req, res) => {
     const pythonPath = path.join(
         projectRoot,
         ".venv",
-        "bin",
-        "python"
+	"Scripts",
+	"python.exe"
     );
 
     execFile(
@@ -195,7 +195,7 @@ app.get("/api/scheduling", (req, res) => {
 
 app.get("/api/analysis/memory", (req, res) => {
     const projectRoot = path.resolve(__dirname, "..");
-    const pythonPath = path.join(projectRoot, ".venv", "bin", "python");
+    const pythonPath = path.join(projectRoot, ".venv", "Scripts", "python.exe");
 
     const pagesParam = req.query.pages || "7,0,1,2,0,3,0,4,2,3,0,3,2";
     const framesParam = Number(req.query.frames || 3);
@@ -256,9 +256,9 @@ app.get("/api/analysis/memory/live", (req, res) => {
     const projectRoot = path.resolve(__dirname, "..");
     const pythonPath = path.join(
         projectRoot,
-        ".venv",
-        "bin",
-        "python"
+       ".venv",
+	"Scripts",
+	"python.exe"
     );
 
     execFile(
