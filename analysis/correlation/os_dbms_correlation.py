@@ -1,3 +1,8 @@
+# ============================================================
+# OS and DBMS Correlation Analysis
+# This module analyzes relationships between operating
+# system resource utilization and database performance.
+# ============================================================
 import math
 from database.db_connection import get_connection
 
