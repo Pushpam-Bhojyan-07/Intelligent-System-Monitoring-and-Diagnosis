@@ -251,6 +251,14 @@ def run_continuous_monitoring(interval=5):
         print("\nDBMS monitoring stopped.")
 
 
+# if __name__ == "__main__":
+#     result = collect_dbms_metrics()
+
+#     print("\n========== DBMS MONITOR ==========")
+#     print(f"Query patterns observed : {result['queries_observed']}")
+#     print(f"New baselines created   : {result['baselines_created']}")
+#     print(f"Interval metrics saved  : {result['metrics_saved']}")
+#     print(f"Captured at             : {result['captured_at']}")
 
 if __name__ == "__main__":
     run_continuous_monitoring(interval=5)
